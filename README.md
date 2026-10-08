@@ -39,10 +39,17 @@ Then open your browser to:
 *(Alternatively, you can `cd resources && python3 -m http.server 8000` and visit `http://localhost:8000/`)*.
 
 ### Deploying to GitHub Pages
-You can also host the visualization for free on GitHub Pages:
-1. In your repository settings on GitHub, navigate to **Pages**.
-2. Select the branch (e.g., `main`) and folder (`/resources` or `/root`).
-3. GitHub Pages will serve the HTML, data, and audio with HTTP range request support.
+An automated GitHub Actions workflow (`.github/workflows/deploy.yml`) is set up to publish the visualization automatically on every push:
+
+1. In your repository on GitHub, go to **Settings** > **Pages**.
+2. Under **Build and deployment > Source**, select **GitHub Actions**.
+3. Push your commits to `master` (or `main`):
+   ```bash
+   git add .
+   git commit -m "Deploy to GitHub Pages"
+   git push origin master
+   ```
+4. The workflow will automatically publish the contents of `resources/` directly to the root of your GitHub Pages site (`https://<username>.github.io/<repository>/`), fully supporting audio seeking and byte-range requests.
 
 ---
 

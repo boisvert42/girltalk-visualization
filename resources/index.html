@@ -173,8 +173,7 @@ font-family: 'Arvo', serif;
         <div class="col-md-3 gt"><a href="http://illegal-art.net/allday/" target="_blank"><img src="allday_frontcover.jpg" height="48" width="48"></a> by <a href="http://en.wikipedia.org/wiki/Girl_Talk_(musician)" target="_blank">Girl Talk</a></div>
         <div class="col-md-2"><img height="48" src="advisory.jpg"></div>
         <div class="col-md-2 header"><a href="https://creativecommons.org/licenses/by-nc-nd/3.0/" target="_blank" style="font-size:12px; color:#777;">CC BY-NC-ND 3.0</a></div>
-        <div class="col-md-2 header"><a href="https://twitter.com/share" class="twitter-share-button" data-via="adereth">Tweet</a>
-<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script></div>
+        <div class="col-md-2 header"><a href="https://bsky.app/intent/compose?text=All%20Day%20by%20Girl%20Talk%2C%20Annotated" target="_blank" class="btn btn-xs btn-primary" style="background-color: #0085ff; border-color: #0085ff; font-family: 'Arvo', serif;">Post to Bluesky</a></div>
         <div class="col-md-3"><div class="header">Created by <a href="https://twitter.com/adereth" target="_blank">@adereth</a></div></div>
         
         
@@ -242,6 +241,7 @@ font-family: 'Arvo', serif;
 
        currentLine = svg.append("line")
                         .attr("class", "current")
+                        .style("pointer-events", "none")
                         .attr("x1", x(0))
                         .attr("x2", x(0))
                         .attr("y1", 0)
@@ -377,6 +377,9 @@ font-family: 'Arvo', serif;
        function seekTo(time) {
          if (audio && !isNaN(time)) {
            audio.currentTime = time / 1000;
+           if (audio.paused) {
+             audio.play();
+           }
          }
        }
 
@@ -385,9 +388,12 @@ font-family: 'Arvo', serif;
                    .attr("y", 0)
                    .attr("height", height)
                    .attr("width", width)
-                   .attr("fill-opacity", 0)
+                   .style("fill", "#fff")
+                   .style("fill-opacity", 0)
+                   .style("pointer-events", "all")
+                   .style("cursor", "pointer")
                    .on("click", function(d) {
-                     var time = x.invert(d3.mouse(this)[0])
+                     var time = x.invert(d3.mouse(this)[0]);
                      seekTo(time);
                      jumpTo(time);
                    });
@@ -397,20 +403,23 @@ font-family: 'Arvo', serif;
                  .data(samples)
                  .enter().append("rect")
                  .attr("class", "bar")
+                 .style("cursor", "pointer")
                  .attr("x", function(d) { return x(d.start); })
                  .attr("height", 4)  //x.rangeBand())
                  .attr("y", function(d) { return y(d.year - 0.5)-5; })
                  .attr("width", function(d) {
                    if (d.end == d.start) {
-                     return x(d.end + 1000) - x(d.start)
+                     return x(d.end + 1000) - x(d.start);
                    } else {
-                     return x(d.end) - x(d.start); }
+                     return x(d.end) - x(d.start);
+                   }
                  })
                  .attr("id", function(d) {return "bar" + d.index})
                  .on("click", function(d) {
+                   d3.event.stopPropagation();
                    seekTo(d.start);
                    jumpTo(d.start);
-                 } );
+                 });
 
        function updatePlayButton() {
          if (audio.paused) {
